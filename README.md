@@ -30,6 +30,10 @@ Desarrollo de un MicroProcesador en la asignatura Arquitectura de Computadoras d
       
    luego guardas el archivo y reinicias la terminal y listo, se ejecutara dicho comando cada vez que inicies la Terminal.
    
+   # Diseño
+    https://github.com/miguelfg03/MicroProcesador/blob/master/MicroP.jpg
+    MicroP.jpg
+   
    # Desarrolladores
     Dunia Marquina -25151464
     Marcos Gutierres - 23727237
