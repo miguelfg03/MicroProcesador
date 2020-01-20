@@ -35,5 +35,5 @@ Desarrollo de un MicroProcesador en la asignatura Arquitectura de Computadoras d
       
    # Desarrolladores
     Dunia Marquina -25151464
-    Marcos Gutierres - 23727237
+    Marcos Gutierrez - 23727237
     Miguel Gil -23723985
