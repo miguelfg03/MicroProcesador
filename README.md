@@ -30,7 +30,7 @@ Desarrollo de un MicroProcesador en la asignatura Arquitectura de Computadoras d
       
    luego guardas el archivo y reinicias la terminal y listo, se ejecutara dicho comando cada vez que inicies la Terminal.
    
-   #Desarrolladores
+   # Desarrolladores
     Dunia Marquina -25151464
     Marcos Gutierres - 23727237
     Miguel Gil -23723985
