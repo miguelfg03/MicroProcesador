@@ -1,10 +1,10 @@
-#ifndef PIPELINE_H
-#define PIPELINE_H
+#ifndef PIPE_H
+#define PIPE_H
 
 # include <systemc.h>
 # include <iostream>
 #include <vector>
-#include<macros.h>
+#include <macros.h>
 
 struct Register{
 
@@ -22,7 +22,7 @@ class Pipe : public sc_module
 	public:
 		sc_in <bool> clock;
 		sc_in <bool> enable;
-		sc_in < sc_uint<IM_length> > instruction;
+		sc_in < sc_uint<Instruction_size> > instruction;
 
 		sc_out < sc_uint<R_size> > op, r1, r2, r3;
 
@@ -66,4 +66,4 @@ class Pipe : public sc_module
 	}
 };
 
-#endif //PIPELINE_H
+#endif //PIPE_H

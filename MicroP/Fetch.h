@@ -1,11 +1,11 @@
 #include <fstream>
 #include <string>
+#include <macros.h>
 
 #ifndef FETCH_H
 #define FETCH_H
 
 #define Inst_mem "inst.txt"
-#define IM_length 16
 
 using namespace std;
 
@@ -13,8 +13,8 @@ SC_MODULE (Fetch){
 
 	ifstream IM;
 	sc_in<bool> clk;
-	sc_in<bool> connect;
-	sc_out< sc_uint<IM_length> > instruction;
+	sc_out<bool> enable;
+	sc_out< sc_uint<Instruction_size> > instruction;
 
 	int PC;
 
@@ -31,12 +31,13 @@ SC_MODULE (Fetch){
 			getline(IM,line);
 
 			PC++;
- 			sc_uint<IM_length> temp;
+ 			sc_uint<Instruction_size> temp;
 
-			for (int i = 0; i < IM_length; ++i)
-				temp[i] = line[IM_length-(i+1)]-'0';
+			for (int i = 0; i < Instruction_size; ++i)
+				temp[i] = line[Instruction_size-(i+1)]-'0';
 
 			instruction = temp;
+			enable.write(true);
 		}
 		else
 		{
@@ -51,7 +52,7 @@ SC_MODULE (Fetch){
 		PC = 0;
 
 		SC_METHOD(fetch);
-			sensitive<<clk.neg() ;
+			sensitive<<clk.neg();
 	}
 
 	~Fetch() {

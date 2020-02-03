@@ -1,14 +1,18 @@
 #ifndef TESTBENCH_H
 #define TESTBENCH_H
 
+#include<macros.h>
+
 SC_MODULE(testbench){
 
-	sc_in <bool> clock;
-	sc_out <bool> enable;
+ 	sc_in <bool> clock;
 	sc_out <bool> enable_wb;
-  
-  sc_in < sc_uint<R_size> > op;
-  sc_in < sc_uint<Dat_size> > r1, r2, r3;
+
+	sc_out < sc_uint<R_size> > dir_Wback;
+	sc_out < sc_uint<Dat_size> > dat_Wback;
+
+	sc_in < sc_uint<R_size> > op;
+	sc_in < sc_uint<Dat_size> > r1, r2, result;
 
 	void print()
 	{
@@ -26,7 +30,7 @@ SC_MODULE(testbench){
 		cout << "    |   ";
 		
 		for (int i = 0; i < Dat_size; ++i)
-		cout << r3.read().range(Dat_size-(i+1),Dat_size-(i+1));
+		cout << result.read().range(Dat_size-(i+1),Dat_size-(i+1));
 		cout << "    | " << clock.read() << endl;
 	}
 	
@@ -36,8 +40,17 @@ SC_MODULE(testbench){
 		cout << "\t-----------------------------------------------------" <<endl;
 		
 		for (int i = 0; i < 9; ++i){
-		  enable.write(true);
 		  enable_wb.write(false);
+			dir_Wback.write(0);
+			dat_Wback.write(0);
+			wait();
+			print();
+		}
+
+		for (int i = 0; i < 9; ++i){
+		  enable_wb.write(true);
+			dir_Wback.write(3);
+			dat_Wback.write(10);
 			wait();
 			print();
 		}
