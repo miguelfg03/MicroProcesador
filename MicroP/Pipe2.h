@@ -14,32 +14,38 @@ class Pipe2 : public sc_module
 
     sc_in <bool> clock;
 
-    sc_in < sc_uint<R_size> > op_in;
-    sc_in < sc_uint<Dat_size> > r1_in, r2_in, r3_in;
+    sc_in < sc_uint<R_size> > op_in, r1_in;
+    sc_in < sc_uint<Dat_size> > r3_in, r2_in;
+    sc_in < sc_uint<Dir_mem_size> > dir_mem_in;
    
-    sc_out < sc_uint<R_size> > op_out; 
-    sc_out < sc_uint<Dat_size> > r3_out, r2_out, r1_out;
+    sc_out < sc_uint<R_size> > op_out, r1_out; 
+    sc_out < sc_uint<Dat_size> > r2_out, r3_out;
+    sc_out < sc_uint<Dir_mem_size> > dir_mem;
+
+    sc_uint <Dir_mem_size> dir_mem_aux;
+    sc_uint <Dat_size> variable[2];
 
     SC_CTOR(Pipe2)
     {
-      for(int i = 0 ; i < 3; i++)
-        	r.variable[i] = 0;
+      for(int i = 0 ; i < 2; i++)
+        	variable[i] = 0;
 
       r.operation = 0;
       
       SC_METHOD(write);
-        	sensitive << clock.pos() << op_in << r3_in << r2_in << r1_in;
+        	sensitive << clock.neg() << op_in << r3_in << r2_in << r1_in;
 
       SC_METHOD(read);
-        sensitive << clock.neg();
+        sensitive << clock.pos();
     }
 
     void write()
     {   
 			r.operation = op_in.read();
-      r.variable[0] = r1_in.read();
-      r.variable[1] = r2_in.read();
-      r.variable[2] = r3_in.read();
+      variable[0] = r2_in.read();
+      variable[1] = r3_in.read();
+      
+      dir_mem_aux = dir_mem_in.read();
       pipe.push_back(r); 
        
     }
@@ -47,9 +53,10 @@ class Pipe2 : public sc_module
     void read()
     {
     	op_out.write(r.operation);
-      r1_out.write(r.variable[0]);
-      r2_out.write(r.variable[1]);
-      r3_out.write(r.variable[2]);
+      r2_out.write(variable[0]);
+      r3_out.write(variable[1]);
+      r1_out.write(r1_in.read());
+      dir_mem.write(dir_mem_aux);
       
     }
 

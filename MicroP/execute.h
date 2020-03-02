@@ -1,8 +1,8 @@
 #ifndef EXECUTE_H
 #define EXECUTE_H
 
-enum instruction {LOAD, STORE, ADD, SUB, MULT, DIV, MAYOR, 
-									MENOR, EQUAL, AND, OR,NOT,JUMPZ};
+enum instruction {LOAD = 1, STORE = 2, ADD = 3, SUB = 4, MULT = 5, DIV = 6 , MAYOR = 7, 
+									MENOR = 8, EQUAL = 9, AND = 10, OR = 11,NOT = 12,JUMPZ = 13};
 
 class Execute : public sc_module {
 
@@ -10,93 +10,122 @@ class Execute : public sc_module {
   
     sc_in <bool> clock;
  		
-    sc_in < sc_uint<R_size> > op;
-		sc_in < sc_uint<Dat_size> > r1, r2, r3;
+    sc_in < sc_uint<R_size> > op, r1;
+	sc_in < sc_uint<Dat_size> > r2, r3;
 
-    sc_out < sc_uint<R_size> > op_out;
-		sc_out < sc_uint<Dat_size> >r1_out, r2_out, r3_out;
+    sc_out < sc_uint<R_size> > dir_out;
+	sc_out < sc_uint<Dat_size> > r_out;
+	sc_out <bool> enable;
     
     SC_CTOR(Execute)
   {
     SC_METHOD(operation);
-      sensitive << clock.neg() << op << r1 << r2;
+      sensitive << clock.neg() << op << r1 << r2 << r3;
 
   }
 
     void operation()
 		{
-				op_out.write(op.read());
-				r1_out.write(r1.read());	
-				r2_out.write(r2.read());
-	
-       switch (op.read())
+
+       	switch (op.read())
         {
             case LOAD:
-								r3_out.write(r3.read());
-						break;
+					dir_out.write(r1.read());
+					r_out.write(0);
+					enable.write(false);
+			break;
     
             case STORE:
-								r3_out.write(r3.read());
+					r_out.write(r2.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             case ADD:
-								r3_out.write(r1.read() + r2.read());
-						break;
+					r_out.write(r2.read() + r3.read());
+					dir_out.write(r1.read());
+					enable.write(false);
+			break;
 
             case SUB:
-								r3_out.write(r1.read() - r2.read());
+					r_out.write(r2.read() - r3.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             case MULT:
-								r3_out.write(r1.read() * r2.read());
+					r_out.write(r2.read()*r3.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             case DIV:
-                r3_out.write(r1.read() / r2.read());
+            		r_out.write(r2.read() / r3.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
-						case MAYOR:
-								if(r1.read() > r2.read())
-                		r3_out.write(r1.read());
-								else 
-										r3_out.write(r2.read());
+			case MAYOR:
+					if(r2.read() > r3.read())
+                		r_out.write(r2.read());
+					else 
+						r_out.write(r3.read());
+
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
-						case MENOR:
-								if(r1.read() < r2.read())
-                		r3_out.write(r1.read());
-								else 
-										r3_out.write(r2.read());
+			case MENOR:
+					if(r2.read() < r3.read())
+            	  		r_out.write(r2.read());
+					else 
+						r_out.write(r3.read());
+
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
-						case EQUAL:
-								if(r1.read() == r2.read())
-                		r3_out.write(r1.read());
-								else 
-										r3_out.write(r3.read());
+			case EQUAL:
+					if(r2.read() == r3.read())
+                		r_out.write(r2.read());
+					else 
+						r_out.write(r3.read());
+
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             case AND:
-            		r3_out.write(r1.read() and r2.read());
+            		r_out.write(r2.read() and r3.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             case OR:
-								r3_out.write(r1.read() or r2.read());
+					r_out.write(r2.read() or r3.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
-						 case NOT:
-            		r3_out.write(not r3.read());
+			case NOT:
+            		r_out.write(not r2.read());
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
-						 case JUMPZ:
-                if(r3_out.read() == 0){  
-                	r3_out.write(r3.read());
-								}
+			case JUMPZ:
+            	    if(r2.read() == 0){  
+                		r_out.write(r1.read());
+					}
+					dir_out.write(r1.read());
+					enable.write(true);
             break;
 
             default:
-                r3_out.write(0);
-            		break;
+                	r_out.write(0);
+					dir_out.write(0);
+					enable.write(false);
+            break;
         }
 		}
 };
